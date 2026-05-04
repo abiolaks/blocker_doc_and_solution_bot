@@ -101,3 +101,4 @@ Reduced repeat questions in team chat
 Positive feedback from team members
 10. Summary
 This proposal outlines a simple, practical approach to capturing and reusing internal technical knowledge. By integrating a support bot with Microsoft Teams and GitHub, the team can reduce duplicated effort, improve documentation quality, and resolve blockers faster with minimal add
+
