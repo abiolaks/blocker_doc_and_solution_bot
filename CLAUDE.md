@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Project context and agent rules for coding agents (pi, Claude Code) working in this repo.
 
 ## Project Overview
 
@@ -82,3 +82,43 @@ Users never write this manually — the bot generates and commits it.
 ## Planning Document Convention
 
 Design and planning docs go in `Issues/` with sequential three-digit prefixes (e.g., `002-architecture-decision.md`).
+
+## Conversational Style
+
+- Keep answers short and concise
+- No emojis in commits, issues, PR comments, or code
+- No fluff or cheerful filler text
+- Technical prose only, be kind but direct ("Thanks @user" not "Thanks so much @user!")
+
+## Code Quality
+
+- Read files in full before making wide-ranging changes
+- Use Python type hints everywhere; avoid `Any` from `typing`
+- Single-line helper functions with a single call site are forbidden — inline them
+- No dynamic imports (`importlib.import_module`, `__import__`) — use standard top-level imports
+- Never remove or downgrade code to fix type errors; fix the actual issue
+- Always ask before removing functionality that appears intentional
+- Never hardcode configuration values — use environment variables or a config file
+
+## Commands
+
+- After code changes: `ruff check . && ruff format --check .` (once configured). Fix all errors before committing.
+- Never run the dev server or bot unless the user explicitly asks
+- Only run tests if the user instructs: `pytest test/specific_test.py -v`
+- If you create or modify a test file, run it and iterate until it passes
+
+## Git Rules
+
+- Never commit unless the user asks
+- Only commit files you changed in this session
+- Never use `git add -A` or `git add .` — always `git add <specific-file>`
+- Before committing, run `git status` and verify you're only staging your files
+- Never run: `git reset --hard`, `git checkout .`, `git clean -fd`, `git stash`
+- If rebase conflicts occur in files you didn't modify, abort and ask the user
+- Include `fixes #<number>` or `closes #<number>` in commit messages when applicable
+
+## PR Workflow
+
+- Analyze PRs without pulling locally first
+- If user approves: create feature branch, pull PR, rebase on main, apply adjustments, commit, merge into main, push, close PR, leave a concise comment
+- Never open PRs yourself — work in feature branches until ready, then merge and push
