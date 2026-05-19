@@ -1,6 +1,6 @@
 ## Parent PRD
 
-`Issues/002-architecture-decision.md`
+`002-architecture-decision.md`
 
 ## What to build
 
@@ -40,7 +40,7 @@ Expose a `/generate-doc` HTTP endpoint (POST, accepts `{"error": "...", "solutio
 
 ## Blocked by
 
-- Blocked by `Issues/006-fastapi-search-endpoint.md` (extends the same FastAPI app)
+- Blocked by `Issues/004-fastapi-search-endpoint.md` (extends the same FastAPI app)
 
 ## User stories addressed
 

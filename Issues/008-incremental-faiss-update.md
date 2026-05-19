@@ -1,6 +1,6 @@
 ## Parent PRD
 
-`Issues/002-architecture-decision.md`
+`002-architecture-decision.md`
 
 ## What to build
 
@@ -27,8 +27,8 @@ Per the ADR (§7 — Index Update Strategy):
 
 ## Blocked by
 
-- Blocked by `Issues/005-faiss-index-builder.md` (needs the FAISS index format and Blob Storage pattern)
-- Blocked by `Issues/009-github-commit-integration.md` (triggered by document commit)
+- Blocked by `Issues/003-faiss-index-builder.md` (needs the FAISS index format and Blob Storage pattern)
+- Blocked by `Issues/007-github-commit-integration.md` (triggered by document commit)
 
 ## User stories addressed
 

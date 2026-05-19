@@ -1,6 +1,6 @@
 ## Parent PRD
 
-`Issues/002-architecture-decision.md`
+`002-architecture-decision.md`
 
 ## What to build
 
@@ -39,8 +39,8 @@ Wrap the FastAPI app using `azure-functions` Python worker for HTTP trigger.
 
 ## Blocked by
 
-- Blocked by `Issues/004-azure-infrastructure.md` (needs Functions, Blob Storage, OpenAI key)
-- Blocked by `Issues/005-faiss-index-builder.md` (needs FAISS index in Blob Storage to search)
+- Blocked by `Issues/002-azure-infrastructure.md` (needs Functions, Blob Storage, OpenAI key)
+- Blocked by `Issues/003-faiss-index-builder.md` (needs FAISS index in Blob Storage to search)
 
 ## User stories addressed
 

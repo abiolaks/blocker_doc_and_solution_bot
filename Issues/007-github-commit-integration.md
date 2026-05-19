@@ -1,6 +1,6 @@
 ## Parent PRD
 
-`Issues/002-architecture-decision.md`
+`002-architecture-decision.md`
 
 ## What to build
 
@@ -31,7 +31,7 @@ Per the ADR (§6 — Knowledge Base Structure, §3 — Full Interaction Flow ste
 
 ## Blocked by
 
-- Blocked by `Issues/006-fastapi-search-endpoint.md` (extends the same FastAPI app)
+- Blocked by `Issues/004-fastapi-search-endpoint.md` (extends the same FastAPI app)
 
 ## User stories addressed
 

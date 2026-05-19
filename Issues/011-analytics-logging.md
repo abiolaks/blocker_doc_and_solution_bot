@@ -1,6 +1,6 @@
 ## Parent PRD
 
-`Issues/002-architecture-decision.md`
+`002-architecture-decision.md`
 
 ## What to build
 
@@ -40,7 +40,7 @@ Export and review via direct Azure Table Storage query or Azure Portal Storage E
 
 ## Blocked by
 
-- Blocked by `Issues/006-fastapi-search-endpoint.md` (logging is instrumented in search and save endpoints)
+- Blocked by `Issues/004-fastapi-search-endpoint.md` (logging is instrumented in search and save endpoints)
 
 ## User stories addressed
 

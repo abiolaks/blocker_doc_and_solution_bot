@@ -1,6 +1,6 @@
 ## Parent PRD
 
-`Issues/002-architecture-decision.md`
+`002-architecture-decision.md`
 
 ## What to build
 
@@ -39,8 +39,8 @@ Uses Azure Bot Service SDK (Python) integrated into the Azure Function.
 
 ## Blocked by
 
-- Blocked by `Issues/006-fastapi-search-endpoint.md` (needs the search endpoint to call)
-- Blocked by `Issues/007-conversation-state.md` (needs session state for no-match thread tracking)
+- Blocked by `Issues/004-fastapi-search-endpoint.md` (needs the search endpoint to call)
+- Blocked by `Issues/005-conversation-state.md` (needs session state for no-match thread tracking)
 
 ## User stories addressed
 

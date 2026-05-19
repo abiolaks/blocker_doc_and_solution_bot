@@ -1,6 +1,6 @@
 ## Parent PRD
 
-`Issues/002-architecture-decision.md`
+`002-architecture-decision.md`
 
 ## What to build
 
@@ -31,7 +31,7 @@ These will be called by the documentation flow (012) and the Teams middleware (0
 
 ## Blocked by
 
-- Blocked by `Issues/004-azure-infrastructure.md` (needs Table Storage)
+- Blocked by `Issues/002-azure-infrastructure.md` (needs Table Storage)
 
 ## User stories addressed
 

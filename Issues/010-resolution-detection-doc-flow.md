@@ -1,6 +1,6 @@
 ## Parent PRD
 
-`Issues/002-architecture-decision.md`
+`002-architecture-decision.md`
 
 ## What to build
 
@@ -38,9 +38,9 @@ Uses conversation state management (007) to track progress through the multi-tur
 
 ## Blocked by
 
-- Blocked by `Issues/008-groq-doc-generation.md` (needs doc generation endpoint)
-- Blocked by `Issues/007-conversation-state.md` (needs session state for multi-turn tracking)
-- Blocked by `Issues/011-teams-bot-search-trigger.md` (needs Teams bot presence in channel)
+- Blocked by `Issues/006-groq-doc-generation.md` (needs doc generation endpoint)
+- Blocked by `Issues/005-conversation-state.md` (needs session state for multi-turn tracking)
+- Blocked by `Issues/009-teams-bot-search-trigger.md` (needs Teams bot presence in channel)
 
 ## User stories addressed
 

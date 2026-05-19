@@ -1,6 +1,6 @@
 ## Parent PRD
 
-`Issues/002-architecture-decision.md`
+`002-architecture-decision.md`
 
 ## What to build
 
@@ -27,8 +27,8 @@ This script is also the basis for the future manual full-rebuild operation.
 
 ## Blocked by
 
-- Blocked by `Issues/003-repo-structure-seed-kb.md` (needs seed documents to embed)
-- Blocked by `Issues/004-azure-infrastructure.md` (needs Blob Storage and OpenAI API key)
+- Blocked by `Issues/001-repo-structure-seed-kb.md` (needs seed documents to embed)
+- Blocked by `Issues/002-azure-infrastructure.md` (needs Blob Storage and OpenAI API key)
 
 ## User stories addressed
 
