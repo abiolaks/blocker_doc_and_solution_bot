@@ -1,10 +1,10 @@
 # ISSUES
 
-Local issue files from `issues/` are provided at start of context. Parse them to understand the open issues.
+Local issue files from `Issues/` are provided at start of context. Parse them to understand the open issues.
 
 You will work on the AFK issues only, not the HITL ones.
 
-You've also been passed a file containing the last few commits. Review these to understand what work has been done.
+You've also been passed a file containing the last few commits and progress.txt. Review these to understand what work has been done and what remains.
 
 If all AFK tasks are complete, output <promise>NO MORE TASKS</promise>.
 
@@ -52,7 +52,9 @@ Make a git commit. The commit message must:
 
 # THE ISSUE
 
-If the task is complete, move the issue file to `issues/done/`.
+If the task is complete:
+- Move the issue file to `Issues/done/`.
+- Update progress.txt: mark the task as done with `[x]`.
 
 If the task is not complete, add a note to the issue file with what was done.
 
