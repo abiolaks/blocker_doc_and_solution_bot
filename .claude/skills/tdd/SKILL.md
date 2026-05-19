@@ -9,7 +9,7 @@ description: Test-driven development with red-green-refactor loop for Python (py
 
 Tests verify **behavior through public interfaces**, not implementation details. Code can change entirely; tests shouldn't.
 
-A good test reads like a specification — "search returns matching knowledge base entries" tells you exactly what capability exists. It survives refactors because it doesn't care about internal structure.
+A good test reads like a specification — "user can withdraw funds" tells you exactly what capability exists. It survives refactors because it doesn't care about internal structure.
 
 A bad test is coupled to implementation — it mocks internal collaborators, tests private functions, or verifies by querying the database directly instead of using the interface. If you rename an internal function and tests fail, those tests were testing implementation, not behavior.
 
@@ -33,62 +33,59 @@ One test → one implementation → repeat. Each test responds to what you learn
 ## Good vs Bad Tests
 
 ```python
-# GOOD: tests observable behavior through public interface
-def test_search_returns_matching_entries(client):
-    response = client.post("/search", json={"query": "FAISS index error"})
-    assert response.status_code == 200
-    assert len(response.json()["results"]) > 0
-    assert response.json()["results"][0]["title"] is not None
+# GOOD: tests observable behavior through public API
+def test_withdraw_reduces_balance(account):
+    account.deposit(100)
+    result = account.withdraw(30)
+    assert result == 30
+    assert account.balance == 70
 
 # BAD: tests implementation details
-def test_search_calls_faiss_index(mocker):
-    mock_search = mocker.patch("app.search.faiss_index.search")
-    search("FAISS index error")
-    mock_search.assert_called_once()
+def test_withdraw_calls_validate(mocker):
+    mock_validate = mocker.patch.object(Account, "_validate")
+    account = Account(balance=100)
+    account.withdraw(30)
+    mock_validate.assert_called_once()
 
 # BAD: bypasses interface to verify
-def test_save_blocker_writes_to_blob(mocker):
-    mock_blob = mocker.patch("azure.storage.blob.BlobClient.upload_blob")
-    save_blocker(blocker_data)
-    mock_blob.assert_called_once()
+def test_create_user_saves_to_db(db_session):
+    create_user(name="Alice")
+    row = db_session.execute("SELECT * FROM users WHERE name = 'Alice'").first()
+    assert row is not None
 
-# GOOD: verifies through interface
-def test_save_blocker_makes_entry_retrievable(client):
-    response = client.post("/blockers", json={"error": "...", "solution": "..."})
-    blocker_id = response.json()["id"]
-    get_resp = client.get(f"/blockers/{blocker_id}")
-    assert get_resp.status_code == 200
+# GOOD: verifies through public interface
+def test_create_user_makes_user_retrievable(db_session):
+    user = create_user(name="Alice")
+    retrieved = get_user(user.id)
+    assert retrieved.name == "Alice"
 ```
 
 ## Mocking
 
 Only mock at **system boundaries** — things you don't control:
 
-```python
-# Mock these (system boundaries)
-# - External APIs: GitHub, Azure Blob/Table Storage, Teams Bot Service
-# - Time: freeze_time / freezegun
-# - Random: seed or mock
+- External APIs, databases, filesystem, network
+- Time (`freezegun`), randomness
+- Anything with side effects outside the process
 
-# Never mock these (your own code)
-# - Your own classes, modules, or functions
-# - Internal collaborators
-```
+Never mock:
+- Your own classes, modules, or functions
+- Internal collaborators
 
 Prefer dependency injection so boundaries are mockable:
 
 ```python
 # Easy to test: dependency injected
-def commit_to_kb(entry, *, github_client):
-    return github_client.create_file(entry)
+def send_notification(user, *, email_client):
+    return email_client.send(user.email, "Hello")
 
 # Hard to test: creates dependency internally
-def commit_to_kb(entry):
-    client = Github(env["GITHUB_TOKEN"])
-    return client.create_file(entry)
+def send_notification(user):
+    client = SmtpClient(host=config.SMTP_HOST)
+    return client.send(user.email, "Hello")
 ```
 
-For FastAPI endpoints, use `TestClient` — it exercises the full stack without mocking internals.
+For web frameworks (FastAPI, Flask), use the framework's test client — it exercises the full stack without mocking internals.
 
 ## Workflow
 
