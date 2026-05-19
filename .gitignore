@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+#my progject
+blocker_doc_and_solutions/local_settings.json
+blocker_doc_and_solutions/solutions/.vscode/
+.pi/
