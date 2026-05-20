@@ -15,6 +15,7 @@ from fastapi import FastAPI, HTTPException
 from openai import OpenAI
 from pydantic import BaseModel, Field
 
+from blocker_doc_and_solution_bot.doc_generator.generator import generate_document
 from blocker_doc_and_solution_bot.search_api.search import (
     embed_query,
     load_index_from_blob,
@@ -64,6 +65,18 @@ class SearchResponse(BaseModel):
     results: list[SearchResult]
 
 
+class GenerateDocRequest(BaseModel):
+    error: str = Field(..., min_length=1, description="The error or unexpected behavior")
+    solution: str = Field(..., min_length=1, description="Steps taken to resolve the issue")
+    project: str = Field(
+        ..., min_length=1, description="Project name for the knowledge base folder"
+    )
+
+
+class GenerateDocResponse(BaseModel):
+    markdown: str
+
+
 @app.post("/search", response_model=SearchResponse)
 def search(request: SearchRequest) -> dict[str, Any]:
     """Embed the query, search FAISS index, and return tiered results."""
@@ -77,3 +90,15 @@ def search(request: SearchRequest) -> dict[str, Any]:
         return {"results": []}
 
     return {"results": raw_results}
+
+
+@app.post("/generate-doc", response_model=GenerateDocResponse)
+def generate_doc(request: GenerateDocRequest) -> dict[str, str]:
+    """Generate a structured Markdown knowledge base entry from user answers."""
+    answers: dict[str, str] = {
+        "error": request.error,
+        "solution": request.solution,
+        "project": request.project,
+    }
+    markdown = generate_document(answers)
+    return {"markdown": markdown}

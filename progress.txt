@@ -4,7 +4,7 @@ TODO
 - [x] 003 — FAISS Index Builder + Blob Upload
 - [x] 004 — FastAPI Search Endpoint
 - [x] 005 — Conversation State Management
-- [ ] 006 — Groq Document Generation
+- [x] 006 — Groq Document Generation
 - [ ] 007 — GitHub Commit Integration
 - [ ] 008 — Incremental FAISS Update
 - [ ] 009 — Teams Bot Registration (HITL)
