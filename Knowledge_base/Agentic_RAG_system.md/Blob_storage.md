@@ -1,4 +1,4 @@
-# Foundry RAG Solution – Blob Storage Access Issue
+# Blob Storage Access Issue
 
 ## Problem
 Azure AI Search could not reliably ingest source documents from Blob Storage.
