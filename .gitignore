@@ -3,6 +3,10 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# FAISS index build artifacts (persisted in Azure Blob Storage)
+faiss.index
+index_map.json
+
 # C extensions
 *.so
 

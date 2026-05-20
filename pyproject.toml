@@ -1,0 +1,54 @@
+[project]
+name = "blocker-doc-and-solution-bot"
+version = "0.1.0"
+requires-python = ">=3.9"
+dependencies = [
+    "azure-functions",
+    "azure-storage-blob",
+    "azure-data-tables",
+    "fastapi",
+    "faiss-cpu",
+    "openai",
+    "groq",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-mock>=3.10",
+    "mypy>=1.0",
+    "ruff>=0.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+explicit_package_bases = true
+exclude = [
+    ".venv/",
+    ".pi/",
+    "ralph/",
+    "Issues/",
+]
+[[tool.mypy.overrides]]
+module = [
+    "faiss.*",
+    "azure.functions.*",
+    "azure.storage.blob.*",
+    "groq.*",
+    "dotenv.*",
+]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+
+[tool.ruff.format]
+quote-style = "double"
