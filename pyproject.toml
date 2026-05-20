@@ -1,3 +1,10 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["blocker_doc_and_solution_bot*"]
+
 [project]
 name = "blocker-doc-and-solution-bot"
 version = "0.1.0"
@@ -39,6 +46,8 @@ module = [
     "faiss.*",
     "azure.functions.*",
     "azure.storage.blob.*",
+    "azure.data.tables.*",
+    "azure.core.*",
     "groq.*",
     "dotenv.*",
 ]
