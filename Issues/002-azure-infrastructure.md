@@ -1,6 +1,6 @@
 ## Parent PRD
 
-`002-architecture-decision.md`
+`architecture-decision.md`
 
 ## What to build
 
