@@ -7,7 +7,7 @@ Container startup failed with:
 error decoding response body
 ```
 
-during model download.
+during model download..
 
 ## Root Cause
 Network instability interrupted the NGC model download process.
