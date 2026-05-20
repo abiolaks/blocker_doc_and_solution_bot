@@ -35,5 +35,5 @@ None — can start immediately (but 003 should run in parallel since 005 needs b
 - PRD §9 — Infrastructure Stack
 - PRD §7 — FAISS Persistence & Index Mapping
 - PRD §8 — Conversation State Management
-- PRD §6 — GitHub Commit Strategy (PAT setup)
+- PRD §6 — GitHub Commits Strategy (PAT setup)
 - PRD §14 — Analytics (Table Storage table)
