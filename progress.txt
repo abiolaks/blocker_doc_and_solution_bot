@@ -2,7 +2,7 @@ TODO
 - [x] 001 — Repo Structure + Seed Knowledge Base
 - [x] 002 — Azure Infrastructure (HITL)
 - [x] 003 — FAISS Index Builder + Blob Upload
-- [ ] 004 — FastAPI Search Endpoint
+- [x] 004 — FastAPI Search Endpoint
 - [ ] 005 — Conversation State Management
 - [ ] 006 — Groq Document Generation
 - [ ] 007 — GitHub Commit Integration
