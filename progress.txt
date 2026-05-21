@@ -6,7 +6,7 @@ TODO
 - [x] 005 — Conversation State Management
 - [x] 006 — Groq Document Generation
 - [x] 007 — GitHub Commit Integration
-- [ ] 008 — Incremental FAISS Update
+- [x] 008 — Incremental FAISS Update
 - [ ] 009 — Teams Bot Registration (HITL)
 - [ ] 010 — Resolution Detection + Doc Flow
 - [ ] 011 — Analytics Logging

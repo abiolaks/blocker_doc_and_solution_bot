@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field
 
 from blocker_doc_and_solution_bot.doc_generator.generator import generate_document
 from blocker_doc_and_solution_bot.github_commit.committer import commit_document
+from blocker_doc_and_solution_bot.index_updater.updater import add_document_to_index
 from blocker_doc_and_solution_bot.search_api.search import (
     embed_query,
     load_index_from_blob,
@@ -138,4 +139,16 @@ def save_document(request: SaveRequest) -> dict[str, str]:
 
     filename = f"{datetime.now().strftime('%Y-%m-%d')}-{request.title_slug}.md"
     path = f"knowledge-base/{request.project}/{filename}"
+
+    # Trigger incremental FAISS index update
+    container = os.getenv("AZURE_STORAGE_CONTAINER", "faiss-index")
+    if _openai_client is not None and _blob_client is not None:
+        add_document_to_index(
+            document_content=request.markdown,
+            document_path=path,
+            openai_client=_openai_client,
+            blob_client=_blob_client,
+            container_name=container,
+        )
+
     return {"url": url, "path": path}

@@ -254,3 +254,40 @@ def test_save_endpoint_rejects_empty_project(
         json={"project": "", "title_slug": "slug", "markdown": "# md"},
     )
     assert response.status_code == 422
+
+
+def test_save_endpoint_triggers_incremental_index_update() -> None:
+    """POST /save should call add_document_to_index after a successful commit."""
+    from blocker_doc_and_solution_bot.search_api.app import app
+
+    with (
+        patch(
+            "blocker_doc_and_solution_bot.search_api.app._openai_client",
+            MagicMock(),
+        ),
+        patch(
+            "blocker_doc_and_solution_bot.search_api.app._blob_client",
+            MagicMock(),
+        ),
+        patch(
+            "blocker_doc_and_solution_bot.search_api.app.commit_document",
+            return_value="https://github.com/abiolaks/repo/blob/main/knowledge-base/p/file.md",
+        ),
+        patch(
+            "blocker_doc_and_solution_bot.search_api.app.add_document_to_index",
+        ) as mock_add,
+    ):
+        client = TestClient(app)
+        payload = {
+            "project": "my-project",
+            "title_slug": "some-issue",
+            "markdown": "# My Issue\n\n## Problem\nError occurred",
+        }
+        response = client.post("/save", json=payload)
+        assert response.status_code == 200
+
+        mock_add.assert_called_once()
+        call_kwargs = mock_add.call_args.kwargs
+        assert call_kwargs["document_content"] == payload["markdown"]
+        assert "knowledge-base/my-project/" in call_kwargs["document_path"]
+        assert call_kwargs["document_path"].endswith("-some-issue.md")
