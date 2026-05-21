@@ -5,7 +5,7 @@ TODO
 - [x] 004 — FastAPI Search Endpoint
 - [x] 005 — Conversation State Management
 - [x] 006 — Groq Document Generation
-- [ ] 007 — GitHub Commit Integration
+- [x] 007 — GitHub Commit Integration
 - [ ] 008 — Incremental FAISS Update
 - [ ] 009 — Teams Bot Registration (HITL)
 - [ ] 010 — Resolution Detection + Doc Flow

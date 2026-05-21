@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from datetime import datetime
 from typing import Any
 
 import faiss
@@ -16,6 +17,7 @@ from openai import OpenAI
 from pydantic import BaseModel, Field
 
 from blocker_doc_and_solution_bot.doc_generator.generator import generate_document
+from blocker_doc_and_solution_bot.github_commit.committer import commit_document
 from blocker_doc_and_solution_bot.search_api.search import (
     embed_query,
     load_index_from_blob,
@@ -77,6 +79,17 @@ class GenerateDocResponse(BaseModel):
     markdown: str
 
 
+class SaveRequest(BaseModel):
+    project: str = Field(..., min_length=1, description="Project folder name under knowledge-base/")
+    title_slug: str = Field(..., min_length=1, description="URL-safe short slug for the filename")
+    markdown: str = Field(..., min_length=1, description="Full Markdown content of the document")
+
+
+class SaveResponse(BaseModel):
+    url: str
+    path: str
+
+
 @app.post("/search", response_model=SearchResponse)
 def search(request: SearchRequest) -> dict[str, Any]:
     """Embed the query, search FAISS index, and return tiered results."""
@@ -102,3 +115,27 @@ def generate_doc(request: GenerateDocRequest) -> dict[str, str]:
     }
     markdown = generate_document(answers)
     return {"markdown": markdown}
+
+
+@app.post("/save", response_model=SaveResponse)
+def save_document(request: SaveRequest) -> dict[str, str]:
+    """Commit an approved Markdown document to the GitHub knowledge base."""
+    owner = os.getenv("GITHUB_REPO_OWNER", "abiolaks")
+    repo = os.getenv("GITHUB_REPO_NAME", "blocker_doc_and_solution_bot")
+
+    try:
+        url = commit_document(
+            project=request.project,
+            title_slug=request.title_slug,
+            markdown_content=request.markdown,
+            owner=owner,
+            repo=repo,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except PermissionError as exc:
+        raise HTTPException(status_code=401, detail=str(exc))
+
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}-{request.title_slug}.md"
+    path = f"knowledge-base/{request.project}/{filename}"
+    return {"url": url, "path": path}

@@ -69,7 +69,9 @@ def main() -> None:
     assert updated["answers"] == '{"error": "KeyError on user_id"}'
     created_at_first = session["created_at"]
     created_at_after_update = updated["created_at"]
-    assert created_at_first == created_at_after_update, "created_at should be preserved across updates!"
+    assert created_at_first == created_at_after_update, (
+        "created_at should be preserved across updates!"
+    )
     print(f"  OK: created_at preserved ({created_at_first})")
 
     # 6. Different user, different thread — isolated
