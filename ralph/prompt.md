@@ -44,7 +44,7 @@ Before committing, run the feedback loops:
 
 # COMMIT
 
-Make a git commit. The commit message must:
+Ask the user if they want you to commit. If yes, make a git commit. The commit message must:
 
 1. Include key decisions made
 2. Include files changed
