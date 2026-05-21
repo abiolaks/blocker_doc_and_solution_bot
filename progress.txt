@@ -7,6 +7,7 @@ TODO
 - [x] 006 — Groq Document Generation
 - [x] 007 — GitHub Commit Integration
 - [x] 008 — Incremental FAISS Update
+- [x] 012 — Telegram Bot Search (stand-in for 009)
 - [ ] 009 — Teams Bot Registration (HITL)
 - [ ] 010 — Resolution Detection + Doc Flow
 - [ ] 011 — Analytics Logging

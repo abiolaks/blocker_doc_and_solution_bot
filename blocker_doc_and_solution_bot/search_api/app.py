@@ -24,6 +24,10 @@ from blocker_doc_and_solution_bot.search_api.search import (
     load_index_from_blob,
     search_and_resolve,
 )
+from blocker_doc_and_solution_bot.telegram_bot.bot import (
+    handle_telegram_update,
+    register_webhook,
+)
 
 # Module-level state initialized at startup
 _openai_client: OpenAI | None = None
@@ -48,6 +52,15 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     _blob_client = BlobServiceClient.from_connection_string(storage_conn_str)
 
     _faiss_index, _index_map = load_index_from_blob(_blob_client, container)
+
+    # Register Telegram webhook if token is set
+    telegram_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if telegram_token:
+        func_base = os.getenv("AZURE_FUNCTION_BASE_URL", "")
+        webhook_url = f"{func_base}/api/telegram/webhook" if func_base else None
+        if webhook_url:
+            register_webhook(telegram_token, webhook_url)
+
     yield
 
 
@@ -152,3 +165,20 @@ def save_document(request: SaveRequest) -> dict[str, str]:
         )
 
     return {"url": url, "path": path}
+
+
+@app.post("/telegram/webhook")
+def telegram_webhook(update: dict[str, Any]) -> dict[str, str]:
+    """Receive Telegram webhook updates — extract text, search, and reply in-thread."""
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not token:
+        raise HTTPException(status_code=503, detail="Telegram bot not configured")
+
+    if _openai_client is None or _faiss_index is None:
+        raise HTTPException(status_code=503, detail="Search index not loaded")
+
+    handle_telegram_update(
+        update,
+        bot_token=token,
+    )
+    return {"status": "ok"}
