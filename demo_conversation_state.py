@@ -7,9 +7,8 @@ from __future__ import annotations
 
 import os
 
-from dotenv import load_dotenv
-
 from azure.data.tables import TableClient, TableServiceClient
+from dotenv import load_dotenv
 
 from blocker_doc_and_solution_bot.conversation_state.session_store import (
     create_or_update_session,
