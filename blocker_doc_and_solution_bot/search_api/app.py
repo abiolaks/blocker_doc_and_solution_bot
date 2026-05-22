@@ -9,7 +9,8 @@ from typing import Any
 
 import faiss
 import numpy as np
-from azure.data.tables import TableClient
+from azure.core.exceptions import ResourceExistsError
+from azure.data.tables import TableClient, TableServiceClient
 from azure.storage.blob import BlobServiceClient
 from botbuilder.schema import Activity
 from dotenv import load_dotenv
@@ -38,7 +39,22 @@ _openai_client: OpenAI | None = None
 _blob_client: BlobServiceClient | None = None
 _faiss_index: faiss.Index | None = None
 _index_map: dict[str, str] = {}
+_session_table: TableClient | None = None
 _analytics_table: TableClient | None = None
+
+
+def _ensure_table(storage_conn_str: str, table_name: str) -> TableClient | None:
+    """Get a TableClient, creating the table in Azure Table Storage if it doesn't exist."""
+    try:
+        service = TableServiceClient.from_connection_string(storage_conn_str)
+        try:
+            service.create_table(table_name)
+        except ResourceExistsError:
+            pass
+        return service.get_table_client(table_name)
+    except Exception as exc:  # noqa: BLE001
+        print(f"[startup] failed to get/create table {table_name!r}: {exc!r}")
+        return None
 
 
 def _initialize_state() -> None:
@@ -48,6 +64,7 @@ def _initialize_state() -> None:
     will return 503 instead of crashing the function host.
     """
     global _openai_client, _blob_client, _faiss_index, _index_map
+    global _session_table, _analytics_table
 
     load_dotenv()
 
@@ -60,6 +77,8 @@ def _initialize_state() -> None:
         return
 
     container = os.getenv("AZURE_STORAGE_CONTAINER", "faiss-index")
+    session_table_name = os.getenv("AZURE_SESSION_TABLE", "botsessions")
+    analytics_table_name = os.getenv("AZURE_ANALYTICS_TABLE", "botanalytics")
 
     try:
         _openai_client = OpenAI(api_key=openai_api_key, base_url=openai_endpoint)
@@ -69,6 +88,13 @@ def _initialize_state() -> None:
     except Exception as exc:  # noqa: BLE001 — log and continue, don't crash host
         print(f"[startup] failed to initialize search backend: {exc!r}")
         return
+
+    _session_table = _ensure_table(storage_conn_str, session_table_name)
+    _analytics_table = _ensure_table(storage_conn_str, analytics_table_name)
+    print(
+        f"[startup] tables: sessions={'ok' if _session_table else 'fail'}, "
+        f"analytics={'ok' if _analytics_table else 'fail'}"
+    )
 
     telegram_token = os.getenv("TELEGRAM_BOT_TOKEN")
     if telegram_token:
@@ -232,5 +258,6 @@ def telegram_webhook(update: dict[str, Any]) -> dict[str, str]:
     handle_telegram_update(
         update,
         bot_token=token,
+        table_client=_session_table,
     )
     return {"status": "ok"}
