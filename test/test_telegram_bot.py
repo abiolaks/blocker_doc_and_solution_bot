@@ -250,3 +250,71 @@ def test_webhook_endpoint_without_token_returns_503() -> None:
         update = _make_message_update("test")
         response = client.post("/telegram/webhook", json=update)
         assert response.status_code == 503
+
+
+# ---------------------------------------------------------------------------
+# Cancel mid-flow tests
+# ---------------------------------------------------------------------------
+
+
+def _run_cancel_test(step: str, cancel_text: str) -> tuple[MagicMock, MagicMock]:
+    """Drive handle_telegram_update with a session at the given step and a cancel message.
+
+    Returns (mock_send, mock_delete_session) for the caller to assert on.
+    """
+    from blocker_doc_and_solution_bot.telegram_bot.bot import handle_telegram_update
+
+    mock_send = MagicMock()
+    mock_delete = MagicMock()
+    session = {"step": step, "error": "x", "solution": "y"}
+    mock_get_session = MagicMock(return_value=session)
+
+    update = _make_message_update(cancel_text, chat_id=42, message_id=99)
+    handle_telegram_update(
+        update,
+        bot_token="fake-token",
+        send_fn=mock_send,
+        get_session_fn=mock_get_session,
+        delete_session_fn=mock_delete,
+    )
+    return mock_send, mock_delete
+
+
+def test_cancel_during_awaiting_error_clears_session() -> None:
+    mock_send, mock_delete = _run_cancel_test("awaiting_error", "cancel")
+    assert mock_send.call_args.kwargs["text"] == "Cancelled. Nothing saved."
+    mock_delete.assert_called_once_with(chat_id=42)
+
+
+def test_cancel_during_awaiting_solution_clears_session() -> None:
+    mock_send, mock_delete = _run_cancel_test("awaiting_solution", "stop")
+    assert "Cancelled" in mock_send.call_args.kwargs["text"]
+    mock_delete.assert_called_once()
+
+
+def test_cancel_is_case_insensitive_and_trims() -> None:
+    mock_send, mock_delete = _run_cancel_test("awaiting_project", "  ABORT  ")
+    mock_delete.assert_called_once()
+    assert "Cancelled" in mock_send.call_args.kwargs["text"]
+
+
+def test_cancel_does_not_match_substring() -> None:
+    """'cancel my flight' must NOT cancel the flow."""
+    from blocker_doc_and_solution_bot.telegram_bot.bot import handle_telegram_update
+
+    mock_send = MagicMock()
+    mock_delete = MagicMock()
+    session = {"step": "awaiting_solution", "error": "x"}
+    mock_get_session = MagicMock(return_value=session)
+
+    update = _make_message_update("cancel my flight booking error", chat_id=1, message_id=2)
+    handle_telegram_update(
+        update,
+        bot_token="fake-token",
+        send_fn=mock_send,
+        get_session_fn=mock_get_session,
+        delete_session_fn=mock_delete,
+    )
+
+    # advance_doc_flow should have run instead — session NOT deleted
+    mock_delete.assert_not_called()

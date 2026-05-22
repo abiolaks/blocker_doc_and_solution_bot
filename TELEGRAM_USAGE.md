@@ -10,6 +10,7 @@ How team members search past blockers and document new ones via the Telegram bot
 | Document a new blocker | Send the query first → after you fix it, reply with "fixed it" / "solved" / "figured it out" | Walks you through error → solution → project → approval, then commits to GitHub |
 | Approve a generated doc | `approve` / `yes` / `ok` | Commits to GitHub, updates the search index |
 | Reject a generated doc | `decline` / `no` / `cancel` | Discards, no commit |
+| Cancel mid-flow (any question) | `cancel` / `stop` / `abort` / `nevermind` / `quit` | Aborts immediately, no commit |
 
 **The bot has no slash commands.** Whatever you type is interpreted based on conversational context.
 
@@ -207,6 +208,9 @@ Bot:  Saved to the knowledge base!
 
 **Q: Can I edit a generated doc before approval?**
 Not currently — only `approve` / `decline`. If the generated doc is wrong, decline and start over with better answers.
+
+**Q: How do I cancel the conversation mid-way?**
+Type `cancel`, `stop`, `abort`, `nevermind`, or `quit` (case-insensitive, exact word only) at any of the awaiting steps. The bot replies "Cancelled. Nothing saved." and clears the session. Note that "cancel my flight" or similar substrings won't trigger cancellation — the match has to be the whole message.
 
 **Q: Can I save without going through the conversational flow?**
 Not via Telegram. The HTTP API has a direct `POST /api/save` endpoint that takes pre-written Markdown, if you want to script it.

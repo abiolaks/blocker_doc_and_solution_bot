@@ -22,6 +22,16 @@ from blocker_doc_and_solution_bot.telegram_bot.resolution import (
 )
 
 
+# Exact words that abort an in-progress doc flow at any awaiting_* step.
+_CANCEL_WORDS = frozenset(
+    {"cancel", "stop", "abort", "nevermind", "never mind", "quit"}
+)
+
+
+def _is_cancel(text: str) -> bool:
+    return text.lower().strip() in _CANCEL_WORDS
+
+
 def _github_url(path: str) -> str:
     """Wrap a repo-relative path as a clickable GitHub blob URL.
 
@@ -132,6 +142,20 @@ def handle_telegram_update(
         session = get_session(user_id, str(chat_id), table_client=table_client)
     else:
         session = None
+
+    # --- Mode 0: cancel an in-progress doc flow at any awaiting_* step ---
+    if session and session.get("step", "") in (
+        "awaiting_error", "awaiting_solution", "awaiting_project", "awaiting_approval",
+    ) and _is_cancel(text):
+        _do_send(chat_id, "Cancelled. Nothing saved.", message_id, bot_token, send_fn)
+        if delete_session_fn is not None:
+            delete_session_fn(chat_id=chat_id)
+        elif table_client is not None:
+            from blocker_doc_and_solution_bot.conversation_state.session_store import (
+                delete_session,
+            )
+            delete_session(user_id, str(chat_id), table_client=table_client)
+        return
 
     # --- Mode 1: Active doc flow session → advance state machine ---
     if session and session.get("step", "") in (
