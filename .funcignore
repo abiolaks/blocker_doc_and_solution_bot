@@ -1,0 +1,47 @@
+.git*
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.pyc
+__pycache__/
+test/
+Issues/
+*.md
+.env
+venv/
+.venv/
+.envrc
+.python-version
+
+# azd / Azure state
+.azure/
+.azurite/
+infra/
+azure.yaml
+
+# Tooling / repo scaffolding
+.claude/
+.pi/
+ralph/
+.vscode/
+
+# Local artifacts not needed at runtime
+deployment.zip
+faiss.index
+index_map.json
+progress.txt
+prompt_sheet.md
+demo_*.py
+
+# Local-only settings (root and subpackage)
+local.settings.json
+blocker_doc_and_solution_bot/local.settings.json
+
+# Duplicate function entrypoints inside the package (root files are authoritative)
+blocker_doc_and_solution_bot/function_app.py
+blocker_doc_and_solution_bot/host.json
+blocker_doc_and_solution_bot/requirements.txt
+blocker_doc_and_solution_bot/.vscode/
+
+# Knowledge base lives in GitHub, not in the function package
+Knowledge_base/

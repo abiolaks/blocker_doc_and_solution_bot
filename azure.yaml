@@ -1,0 +1,8 @@
+name: blocker-doc-solution-bot
+metadata:
+  template: default
+services:
+  api:
+    project: .
+    language: python
+    host: function
