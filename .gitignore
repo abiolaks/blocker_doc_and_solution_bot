@@ -3,10 +3,6 @@ __pycache__/
 *.py[codz]
 *$py.class
 
-# FAISS index build artifacts (persisted in Azure Blob Storage)
-faiss.index
-index_map.json
-
 # C extensions
 *.so
 
@@ -221,7 +217,12 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-#my progject
+# my progject
 blocker_doc_and_solutions/local_settings.json
 blocker_doc_and_solutions/solutions/.vscode/
 .pi/
+
+# Deployment artifacts (live in blob storage, not source)
+deployment.zip
+faiss.index
+index_map.json
