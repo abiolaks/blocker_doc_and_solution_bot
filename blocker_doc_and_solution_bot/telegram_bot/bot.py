@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import os
 from collections.abc import Callable
 from typing import Any
+from urllib.parse import quote
 
 import httpx
 from azure.data.tables import TableClient
@@ -20,12 +22,26 @@ from blocker_doc_and_solution_bot.telegram_bot.resolution import (
 )
 
 
+def _github_url(path: str) -> str:
+    """Wrap a repo-relative path as a clickable GitHub blob URL.
+
+    Without the github.com prefix, Telegram's auto-link parser treats path
+    segments like 'foo.md' as TLDs (e.g. '.md' is Moldova) and the link
+    fails with DNS_PROBE_FINISHED_NXDOMAIN when clicked.
+    """
+    owner = os.getenv("GITHUB_REPO_OWNER", "abiolaks")
+    repo = os.getenv("GITHUB_REPO_NAME", "blocker_doc_and_solution_bot")
+    branch = os.getenv("GITHUB_REPO_BRANCH", "main")
+    safe_path = "/".join(quote(seg) for seg in path.split("/"))
+    return f"https://github.com/{owner}/{repo}/blob/{branch}/{safe_path}"
+
+
 def _format_reply(results: list[dict[str, str | float]]) -> str:
     """Build the tiered reply text from search results.
 
     Takes the best result and formats per the ADR:
-    - match (>0.85): "Found a match — here's the fix: [path]"
-    - related (0.5–0.85): "Found something related that might help: [path] — not an exact match"
+    - match (>0.85): "Found a match — here's the fix: [url]"
+    - related (0.5–0.85): "Found something related that might help: [url] — not an exact match"
     - no_match (<0.5): "Nothing in the knowledge base for this one — I'll watch this thread"
     """
     if not results:
@@ -33,12 +49,12 @@ def _format_reply(results: list[dict[str, str | float]]) -> str:
 
     best = results[0]
     tier = best["tier"]
-    path = str(best["path"])
+    url = _github_url(str(best["path"]))
 
     if tier == "match":
-        return f"Found a match — here's the fix: {path}"
+        return f"Found a match — here's the fix: {url}"
     if tier == "related":
-        return f"Found something related that might help: {path} — not an exact match"
+        return f"Found something related that might help: {url} — not an exact match"
     return "Nothing in the knowledge base for this one — I'll watch this thread"
 
 
